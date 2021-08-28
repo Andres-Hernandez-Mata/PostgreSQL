@@ -24,6 +24,5 @@ CREATE DATABASE foo
     CONNECTION LIMIT = -1;
 
 
-\c foo;
 
 
