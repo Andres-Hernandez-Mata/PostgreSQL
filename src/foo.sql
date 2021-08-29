@@ -73,7 +73,58 @@ INSERT INTO player (name, points) VALUES
 ('egarcia', 102),
 ('joviedo', 101)
 
+DROP VIEW vista_acceso_top_saldo_casino
+
+		
 
 
+
+SECURITY LABEL FOR anon ON COLUMN player.name
+	IS 'MASKED WITH VALUE ''CONFIDENTIAL'' '
+
+SELECT * FROM usuario
+
+SELECT anon.anonymize_column('player','name')
+SELECT anon.shuffle_column('player', 'points');
+
+SELECT anon.start_dynamic_masking();
+SELECT anon.load();
+
+SELECT anon.anonymize_table('player');
+
+SELECT * FROM vista_acceso_top_saldo_casino
+
+CREATE MATERIALIZED VIEW vista_acceso_top_saldo_casino AS 
+	SELECT id, 'CONFIDENCIAL'::TEXT AS name, points FROM player
+
+SELECT * FROM vista_acceso_top_saldo_casino;
+
+
+
+select * from information_schema.role_table_grants
+
+
+CREATE ROLE aplicacion01
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE ON SEQUENCES TO aplicacion01;
+GRANT aplicacion01 TO m2034154;
+
+
+
+SELECT * FROM pg_roles where rolname IN ('postgres', 'm2034154');
+
+
+
+
+SELECT 
+      r.rolname, 
+      ARRAY(SELECT b.rolname
+            FROM pg_catalog.pg_auth_members m
+            JOIN pg_catalog.pg_roles b ON (m.roleid = b.oid)
+            WHERE m.member = r.oid) as memberof
+FROM pg_catalog.pg_roles r
+WHERE r.rolname NOT IN ('pg_signal_backend','rds_iam',
+                        'rds_replication','rds_superuser',
+                        'rdsadmin','rdsrepladmin')
+ORDER BY 1;
 
 
